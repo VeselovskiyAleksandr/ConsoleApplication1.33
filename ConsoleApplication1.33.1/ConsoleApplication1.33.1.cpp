@@ -56,7 +56,7 @@ public:
 		}
 		if (obj != nullptr) {
 			count->reduceCounter();
-			cout << "(" << count-> getCounter() << ")";
+			cout << "(" << count-> getCounter()<<"red"<< ")";
 			if (count->getCounter() == 0) {
 				delete count;
 			}
@@ -65,11 +65,12 @@ public:
 		obj = new Toy(*oth.obj);
 		count = oth.count;
 		oth.count->addCounter();
-		cout << "(" << count->getCounter() << ")";
+		cout << "(" << count->getCounter()<<"add" << ")";
 		return*this;
 	}
 	~shared_ptr_toy() {
 		count->reduceCounter();
+		cout << "(" << count->getCounter()<<"reduce" << ")";
      if (count->getCounter() == 0) {
 		 cout << "\ndelete count. ";
 			 delete count;
@@ -88,6 +89,9 @@ class Dog {
 		string name, toyName;
        shared_ptr_toy lovelyToy;
 public:
+	void copyLovelyToy(const Dog& oth) {
+		lovelyToy = oth.lovelyToy;
+	}
 	Dog(string _name, string _toyName, int _age) : name(_name), toyName(_toyName), lovelyToy(toyName){
 		if (_age >= 0 && age < 30) { age = _age; };
 	};
@@ -101,7 +105,8 @@ int main()
 	Dog a(e);
 	Dog d;
 	Dog b(d);
-	Dog f = e;
+    Dog f = e;
+f.copyLovelyToy(d);
 	Dog g(e);
 	return 0;
 }
