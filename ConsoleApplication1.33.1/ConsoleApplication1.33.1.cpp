@@ -3,18 +3,25 @@
 
 #include <iostream>
 #include <string>
+///* #define THROW */
+///* #define MAKE_SHARED */
 using namespace std;
 
 
 class Toy {
-	string name;
+	const string name;
 public:
-	Toy(string _name):name(_name) {};
+	string getName() {
+		return name;
+	}
+	Toy(const string&_name):name(_name) {
+		cout << "\nToy";
+	};
 	Toy() :name("Bone") {};
 };
 
 class Counter {
-	int counter;
+	int counter=0;
 public:
 	void setCounter(int _counter) {
 		counter = _counter;
@@ -24,29 +31,45 @@ public:
 	}
 	void addCounter() {
 		counter++;
+	
 	}
 	void reduceCounter() {
-		counter--;
+	
+		counter--; cout << getCounter();
 	}
+	Counter() {
+		cout << "\nCounter";
+	};
 };
 
+
+pair<Toy, Counter> make_shared_toy(const string toyName) {
+	Toy* lovetoy;
+	Counter* count;
+	lovetoy = new Toy(toyName);
+	 count = new Counter();
+	return make_pair(* lovetoy, * count);
+}
+
+
 class shared_ptr_toy {
-	Toy* obj;
-	Counter *count;
+	Toy *lovetoy;
+	Counter* count;
+	shared_ptr_toy *pointer;
 public:
-	shared_ptr_toy() {
-		obj = new Toy();
-		count = new Counter();
-		count->setCounter(1);
-	}
-	shared_ptr_toy(string name) {
-		obj = new Toy(name);
-		count = new Counter();
-		count->setCounter(1);
+	shared_ptr_toy(string toyName) {
+	//	cout << "(" << count->getCounter() << ")";
+		pair<Toy, Counter> pointer=make_shared_toy(toyName);
+		//*lovetoy = pointer.first;
+		*count = pointer.second;
+
+		count->addCounter();
+		cout <<"("<< count->getCounter()<<")";
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
-		obj = new Toy(*oth.obj);
-		count = oth.count;
+		pointer = new shared_ptr_toy(*oth.pointer);
+		//*lovetoy =* oth.lovetoy;
+		*count = *oth.count;
 		oth.count->addCounter();
 		cout << "(" << count->getCounter() << ")";
 	}
@@ -54,59 +77,229 @@ public:
 		if (this == &oth) {
 			return*this;
 		}
-		if (obj != nullptr) {
+		if (lovetoy != nullptr) {
 			count->reduceCounter();
 			cout << "(" << count-> getCounter()<<"red"<< ")";
 			if (count->getCounter() == 0) {
 				delete count;
 			}
-			delete obj;
+			delete lovetoy;
 		}
-		obj = new Toy(*oth.obj);
-		count = oth.count;
+		//obj = new Toy(*oth.obj);
+		 pointer = new shared_ptr_toy(*oth.pointer);
+		 //*lovetoy = *oth.lovetoy;
+		*count = *oth.count;
 		oth.count->addCounter();
 		cout << "(" << count->getCounter()<<"add" << ")";
 		return*this;
 	}
 	~shared_ptr_toy() {
+		cout << "(" << count->getCounter() << "add" << ")";
 		count->reduceCounter();
-		cout << "(" << count->getCounter()<<"reduce" << ")";
      if (count->getCounter() == 0) {
 		 cout << "\ndelete count. ";
 			 delete count;
 		}
 		cout << "\ndelete lovelyToy. ";
-		delete obj;
+		delete lovetoy;
 	}
 };
 
-//void make_shared_toy(string toyName, shared_ptr_toy *lovelyToy) {
-	//*lovelyToy = toyName;
-//}
+
+	//   void  make_shared_toy(Toy &otherToy) {
+	//	   Toy* toy;
+	//	   toy = new Toy(otherToy.getName());
+	 //  }
+
 
 class Dog {
         int age;
 		string name, toyName;
-       shared_ptr_toy lovelyToy;
+       shared_ptr_toy *loveToy;
 public:
 	void copyLovelyToy(const Dog& oth) {
-		lovelyToy = oth.lovelyToy;
+		loveToy = oth.loveToy;
 	}
-	Dog(string _name, string _toyName, int _age) : name(_name), toyName(_toyName), lovelyToy(toyName){
+	Dog(string _name, string toyName, int _age) : name(_name) {
 		if (_age >= 0 && age < 30) { age = _age; };
+		//shared_ptr_toy*loveToy = new shared_ptr_toy(toyName);
 	};
-	Dog() : Dog("Druzhok", "Bone", 2) {};
-	Dog(string _name) : Dog(_name, "Bone", 2) {};
+	Dog() : Dog ("Druzhok",toyName, 2) {};
+	Dog(string _name) : Dog ( _name, toyName, 2) {};
 };
+
+class Right {
+public:
+	Right(const std::string& str) {
+		std::cout << "C-tor Right:" << str << " \n";
+	}
+	~Right() {
+		std::cout << "D-tor Right\n";
+	}
+};
+
+class Left {
+public:
+	Left(const std::string& str) {
+#ifdef THROW
+		throw str;
+#endif
+		std::cout << "C-tor Left:" << str << " \n";
+	}
+	~Left() {
+		std::cout << "D-tor Left\n";
+	}
+};
+
+void foo(const std::shared_ptr<Left>& lhs, const std::shared_ptr<Right>& rhs) {
+
+}
 
 int main()
 {
-	Dog e("Muha", "stick", 3);
+	Toy* lovelytoy;
+	Counter* count;
+//	make_shared_toy("Stick");
+	//Counter* count=nullptr;
+//shared_ptr_toy point (Toy*lovelytoy, Counter *count, string toyname);
+	//pair<Toy, Counter> pointer =make_shared_toy("Stick");
+	//Toy lovelytoy= pointer.first;
+	//Counter count = pointer.second;
+	//cout << lovelytoy->getName();
+	//shared_ptr_toy ("Stick" );
+	//make_shared_toy("Bone");
+	//shared_ptr_toy *bone;
+	try {
+#ifdef MAKE_SHARED
+		foo(std::make_shared<Left>("foo"), std::make_shared<Right>("bar"));
+#else
+		foo(std::shared_ptr<Left>(new Left("foo")), std::shared_ptr<Right>(new Right("bar")));
+#endif
+	}
+	catch (...) {
+		int i;
+		std::cin >> i;
+	}
+
+	Dog e("Muha","Stick", 3);
+
 	Dog a(e);
-	Dog d;
-	Dog b(d);
+	//Dog d;
+	//Dog b(d);
     Dog f = e;
-f.copyLovelyToy(d);
+//f.copyLovelyToy(d);
+	Dog g(e);
+	return 0;
+}
+
+
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Toy {
+	string name;
+	int counter = 0;
+public:
+	string getName() {
+		return name;
+	}
+	void setCounter(int _counter) {
+		counter = _counter;
+	}
+	int getCounter() {
+		return counter;
+	}
+	void addCounter() {
+		counter++;
+
+	}
+	void reduceCounter() {
+
+		counter--; cout << getCounter();
+	}
+	Toy(const string& _name) :name(_name) {
+		cout << "\nToy";
+	};
+	Toy() :name("Bone") {};
+};
+
+Toy make_shared_toy(const string toyName);
+
+class shared_ptr_toy {
+	Toy* lovetoy;
+public:
+	shared_ptr_toy(const string toyName) {
+		*lovetoy = make_shared_toy(toyName);
+		lovetoy->addCounter();
+		cout << "(" << lovetoy->getCounter() << ")";
+	}
+	shared_ptr_toy(const shared_ptr_toy& oth) {
+		*lovetoy = *oth.lovetoy;
+		oth.lovetoy->addCounter();
+		cout << "(" << lovetoy->getCounter() << ")";
+	}
+	shared_ptr_toy& operator=(const shared_ptr_toy(&oth)) {
+		if (this == &oth) {
+			return*this;
+		}
+		if (lovetoy != nullptr) {
+			lovetoy->reduceCounter();
+			cout << "(" << lovetoy->getCounter() << "red" << ")";
+			if (lovetoy->getCounter() == 0) {
+				delete lovetoy;
+			}
+		}
+		*lovetoy = *oth.lovetoy;
+		oth.lovetoy->addCounter();
+		cout << "(" << lovetoy->getCounter() << "add" << ")";
+		return*this;
+	}
+	~shared_ptr_toy() {
+		cout << "(" << lovetoy->getCounter() << "add" << ")";
+		lovetoy->reduceCounter();
+		if (lovetoy->getCounter() == 0) {
+			cout << "\ndelete count. ";
+			cout << "\ndelete lovelyToy. ";
+			delete lovetoy;
+		}
+	}
+};
+
+class Dog {
+	int age = 0;
+	const string name, toyName;
+	shared_ptr_toy loveToy;
+public:
+	void copyLovelyToy(const Dog& oth) {
+		loveToy = oth.loveToy;
+	}
+	Dog(const string _name, const string toyName, int _age) : name(_name), loveToy(toyName) {
+		if (_age >= 0 && age < 30) { age = _age; };
+
+	};
+	Dog() : Dog("Druzhok", "Bone", 2) {};
+	Dog(const string _name) : Dog(_name, toyName, 2) {};
+};
+
+Toy make_shared_toy(const string toyName) {
+	Toy* toy = new Toy(toyName);
+	return *toy;
+};
+
+//void foo(const shared_ptr<Toy>& lhs, const shared_ptr<Counter>& rhs) {};
+	//	
+int main()
+{
+	Dog e("Muha", "Stick", 3);
+	//Dog a(e);
+	//Dog d;
+	//Dog b(d);
+	Dog f = e;
+	//f.copyLovelyToy(d);
 	Dog g(e);
 	return 0;
 }
