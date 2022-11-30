@@ -20,7 +20,7 @@ public:
 Toy make_shared_toy(const string toyName);
 
 class shared_ptr_toy {
-	Toy* lovetoy;
+	Toy *lovetoy;
 	int counter = 0;
 public:
 	int getCounter() {
@@ -33,7 +33,6 @@ public:
 		counter--;
 	}
 	shared_ptr_toy(const string toyName) {
-		make_shared_toy(toyName);
 		addCounter();
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
@@ -45,14 +44,12 @@ public:
 		if (this == &oth) {
 			return*this;
 		}
-		if (lovetoy != nullptr) {
-			reduceCounter();
+	if(lovetoy != nullptr) {
 			if (getCounter() == 0) {
-				cout << "\ndelete lovelyToy. ";
+				cout << "\n delete lovelyToy. ";
 				delete lovetoy;
 			}
 		}
-		addCounter();
 		return*this;
 	}
 	~shared_ptr_toy() {
@@ -66,6 +63,7 @@ public:
 };
 
 class Dog {
+
 	int age = 0;
 	string name, toyName;
 	shared_ptr_toy loveToy;
@@ -76,39 +74,49 @@ public:
 	string getname() {
 		return name;
 	}
-	string getToyName() {
+	 string getToyName() {
 		return toyName;
 	}
 	void copyLovelyToy(const Dog& oth) {
 		name = oth.name;
 		age = oth.age;
-		loveToy = oth.loveToy;
 		toyName = oth.toyName;
-		cout << " " << getToyName();
+		loveToy.reduceCounter();
+		cout << "\n" << getname() << " " << getage() << " " << getToyName();
 	}
-	Dog(const string _name, const string toyName, int _age) : name(_name), loveToy(toyName) {
+	Dog(const string _name, const string _toyName, int _age) : name(_name), loveToy(_toyName), toyName(_toyName){
 		if (_age >= 0 && age < 30) { age = _age; };
 		cout << "\n" << getname() << " " << getage() << " " << toyName;
 	};
 	Dog() : Dog("Druzhok", "Bone", 2) {};
 	Dog(const string _name) : Dog(_name, "Bone", 2) {};
+	Dog(const Dog& oth):loveToy(oth.loveToy) {
+		name = oth.name;
+		age = oth.age;
+		toyName = oth.toyName;
+		cout << "\n" << getname() << " " << getage() << " " << toyName;
+	}
 };
 
 Toy make_shared_toy(const string toyName) {
 	Toy* toy = new Toy(toyName);
 	return *toy;
-};
+}; 
 
 int main()
 {
+  make_shared_toy("Stick");
 	Dog e("Muha", "Stick", 3);
+   make_shared_toy("Bone");
 	Dog a(e);
 	Dog d;
 	Dog b(d);
 	Dog q = e;
 	Dog f("Belka");
-	f.copyLovelyToy(e);
+	 f.copyLovelyToy(e);
 	Dog g(e);
+	e.copyLovelyToy(b);
+	 g.copyLovelyToy(b);
 	return 0;
 }
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

@@ -36,10 +36,6 @@ public:
 		 make_shared_toy(toyName);
 		 addCounter();
 	}
-	//shared_ptr_toy() :shared_ptr_toy("Bone") {
-	//	make_shared_toy("Bone");
-	//	addCounter();
-	//}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
 		*lovetoy = *oth.lovetoy;
 		counter = oth.counter;
@@ -106,13 +102,13 @@ Toy make_shared_toy(const string toyName) {
 int main()
 {
 	Dog e("Muha", "Stick", 3);
-	Dog a(e);
-	Dog d;
-	Dog b(d);
-	Dog q = e;
+//	Dog a(e);
+//	Dog d;
+//	Dog b(d);
+//	Dog q = e;
 	Dog f("Belka");
 	f.copyLovelyToy(e);
-	Dog g(e);
+//	Dog g(e);
 	return 0;
 }
 
