@@ -32,7 +32,8 @@ public:
 	void reduceCounter() {
 		counter--;
 	}
-	shared_ptr_toy(const string toyName) {
+	shared_ptr_toy(const string toyName) { 
+		make_shared_toy(toyName);
 		addCounter();
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
@@ -45,11 +46,14 @@ public:
 			return*this;
 		}
 	if(lovetoy != nullptr) {
+		reduceCounter();
 			if (getCounter() == 0) {
 				cout << "\n delete lovelyToy. ";
 				delete lovetoy;
 			}
 		}
+	lovetoy = oth.lovetoy;
+	counter = oth.counter;
 		return*this;
 	}
 	~shared_ptr_toy() {
@@ -78,15 +82,16 @@ public:
 		return toyName;
 	}
 	void copyLovelyToy(const Dog& oth) {
+		loveToy.reduceCounter();
 		name = oth.name;
 		age = oth.age;
 		toyName = oth.toyName;
-		loveToy.reduceCounter();
-		cout << "\n" << getname() << " " << getage() << " " << getToyName();
+		loveToy.addCounter();
+		cout << "\n" << getname() << " " << getage() << " " << getToyName() << " " << " counter= " << loveToy.getCounter();
 	}
 	Dog(const string _name, const string _toyName, int _age) : name(_name), loveToy(_toyName), toyName(_toyName){
 		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\n" << getname() << " " << getage() << " " << toyName;
+		cout << "\n" << getname() << " " << getage() << " " << toyName << " " << " counter= " << loveToy.getCounter();
 	};
 	Dog() : Dog("Druzhok", "Bone", 2) {};
 	Dog(const string _name) : Dog(_name, "Bone", 2) {};
@@ -94,7 +99,7 @@ public:
 		name = oth.name;
 		age = oth.age;
 		toyName = oth.toyName;
-		cout << "\n" << getname() << " " << getage() << " " << toyName;
+		cout << "\n" << getname() << " " << getage() << " " << toyName << " " << " counter= " << loveToy.getCounter();
 	}
 };
 
@@ -105,9 +110,7 @@ Toy make_shared_toy(const string toyName) {
 
 int main()
 {
-  make_shared_toy("Stick");
 	Dog e("Muha", "Stick", 3);
-   make_shared_toy("Bone");
 	Dog a(e);
 	Dog d;
 	Dog b(d);
