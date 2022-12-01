@@ -83,8 +83,6 @@ public:
 	}
 	void copyLovelyToy(const Dog& oth) {
 		loveToy.reduceCounter();
-		name = oth.name;
-		age = oth.age;
 		toyName = oth.toyName;
 		loveToy.addCounter();
 		cout << "\n" << getname() << " " << getage() << " " << getToyName() << " " << " counter= " << loveToy.getCounter();
