@@ -11,7 +11,7 @@ public:
 	string getName() {
 		return name;
 	}
-	Toy(const string& _name) :name(_name) {
+	Toy(const string _name) :name(_name) {
 		cout << "\nToy: " << getName();
 	};
 	Toy() :name("Bone") {};
@@ -21,53 +21,58 @@ Toy make_shared_toy(const string toyName);
 
 class shared_ptr_toy {
 	Toy *lovetoy;
-	int counter = 0;
+	int *counter;
 public:
-	int getCounter() {
-		return counter;
+	int reduceCounter() {
+		--* counter;
+		return *counter;
 	}
-	void addCounter() {
-		counter++;
-	}
-	void reduceCounter() {
-		counter--;
+	int addCounter() {
+		++* counter;
+		return *counter;
 	}
 	shared_ptr_toy(const string toyName) { 
 		make_shared_toy(toyName);
-		addCounter();
+		counter=new int(1);
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
 		*lovetoy = *oth.lovetoy;
 		counter = oth.counter;
-		addCounter();
+		++* counter;
 	}
 	shared_ptr_toy& operator=(const shared_ptr_toy(&oth)) {
 		if (this == &oth) {
 			return*this;
 		}
-	if(lovetoy != nullptr) {
-		reduceCounter();
-			if (getCounter() == 0) {
-				cout << "\n delete lovelyToy. ";
+		--* counter;
+		if(*counter==0){
+			cout << "\n delete lovelyToy. ";
 				delete lovetoy;
+				delete counter;
 			}
-		}
 	lovetoy = oth.lovetoy;
 	counter = oth.counter;
+	++*counter;
 		return*this;
 	}
+	int getCounter() {
+		return *counter;
+	}
 	~shared_ptr_toy() {
-		reduceCounter();
-		if (getCounter() == 0) {
+		if (*counter > 1) {
+			--* counter;
+		}
+		else {
 			cout << "\ndelete lovetoy. ";
 			delete lovetoy;
+			delete counter;		
 		}
-		cout << "\ndelete ptr. ";
+	cout<< "\ndelete ptr. " << "Counter after deleting an object " << *counter;
+		cout ;
 	}
 };
 
 class Dog {
-
 	int age = 0;
 	string name, toyName;
 	shared_ptr_toy loveToy;
@@ -81,15 +86,16 @@ public:
 	 string getToyName() {
 		return toyName;
 	}
-	void copyLovelyToy(const Dog& oth) {
-		loveToy.reduceCounter();
+	void copyLovelyToy(const Dog &oth) {
+		loveToy = oth.loveToy;
 		toyName = oth.toyName;
-		loveToy.addCounter();
-		cout << "\n" << getname() << " " << getage() << " " << getToyName() << " " << " counter= " << loveToy.getCounter();
+		cout << "\nDog: " << getname() << " " << getage() << " " << getToyName();
+		cout << "\n counter " << toyName << " after assignment constructer = " << loveToy.getCounter()<<"\n";
 	}
 	Dog(const string _name, const string _toyName, int _age) : name(_name), loveToy(_toyName), toyName(_toyName){
 		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\n" << getname() << " " << getage() << " " << toyName << " " << " counter= " << loveToy.getCounter();
+		cout << "\nDog: " << getname() << " " << getage() << " " << getToyName();
+		cout << "\n counter " << toyName << " after string name constructer = " << loveToy.getCounter();
 	};
 	Dog() : Dog("Druzhok", "Bone", 2) {};
 	Dog(const string _name) : Dog(_name, "Bone", 2) {};
@@ -97,7 +103,8 @@ public:
 		name = oth.name;
 		age = oth.age;
 		toyName = oth.toyName;
-		cout << "\n" << getname() << " " << getage() << " " << toyName << " " << " counter= " << loveToy.getCounter();
+		cout << "\nDog: " << getname() << " " << getage() << " " << getToyName();
+		cout << "\n counter " << toyName << " after copy constructer = " << loveToy.getCounter();
 	}
 };
 
@@ -114,10 +121,10 @@ int main()
 	Dog b(d);
 	Dog q = e;
 	Dog f("Belka");
-	 f.copyLovelyToy(e);
+	 f.copyLovelyToy(d);
 	Dog g(e);
 	e.copyLovelyToy(b);
-	 g.copyLovelyToy(b);
+	g.copyLovelyToy(b);
 	return 0;
 }
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
