@@ -12,9 +12,11 @@ public:
 		return name;
 	}
 	Toy(const string _name) :name(_name) {
-		cout << "\nToy: " << getName();
+		cout << "\nToy: ";
 	};
-	Toy() :name("Bone") {};
+	Toy():name("Bone") {
+		cout << "\nToy: ";
+	};
 };
 
 Toy make_shared_toy(const string toyName);
@@ -24,7 +26,8 @@ class shared_ptr_toy {
 	int *counter;
 public:
 	shared_ptr_toy(const string toyName){
-		 make_shared_toy(toyName);
+		Toy lovetoy= make_shared_toy(toyName);
+		cout << "(" << lovetoy.getName() << ")";
 		counter=new int(1);
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
@@ -64,7 +67,6 @@ public:
 };
 
 class Dog {
-	Toy toy;
 	int age = 0;
 	string name;
 	shared_ptr_toy loveToy;
@@ -77,31 +79,31 @@ public:
 	}
 	void copyLovelyToy(const Dog &oth) {
 		loveToy = oth.loveToy;
-		cout << "\nDog: " << getname() << " " << getage() << " " << toy.getName();
-		cout << "\n counter " << toy.getName() << " after assignment constructer = " << loveToy.getCounter()<<"\n";
+		cout << "\nDog: " << getname() << " " << getage();
+		cout << "\n counter "  << " after assignment constructer = " << loveToy.getCounter()<<"\n";
 	}
-	Dog(const string _name, const string toyName, int _age) : name(_name), loveToy(toyName){
+	Dog(const string _name, const string toyName, int _age) : name(_name), loveToy(toyName) {
 		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage() << " " << toy.getName();
-		cout << "\n counter " << toy.getName() << " after string name constructer = " << loveToy.getCounter();
+		cout << "\nDog: " << getname() << " " << getage();
+		cout << "\n counter "  << " after string name constructer = " << loveToy.getCounter();
 	};
 	Dog() : Dog("Druzhok", "Bone", 2) {};
 	Dog(const string _name) : Dog(_name, "Bone", 2) {};
-	Dog(const Dog& oth):loveToy(oth.loveToy) {
+	Dog(const Dog& oth):loveToy(oth.loveToy){
 		name = oth.name;
 		age = oth.age;
-		cout << "\nDog: " << getname() << " " << getage() << " " << toy.getName();
-		cout << "\n counter " << toy.getName() << " after copy constructer = " << loveToy.getCounter();
+		cout << "\nDog: " << getname() << " " << getage();
+		cout << "\n counter " << " after copy constructer = " << loveToy.getCounter();
 	}
 	~Dog() {
-		cout << "\ndelete dog "<<getname();
+		cout << "\n delete dog "<<getname();
 	}
 };
 
 Toy make_shared_toy(const string toyName) {
-	Toy* toy = new Toy(toyName);
-	return *toy;
-}; 
+		Toy* toy = new Toy(toyName);
+		return *toy;
+};
 
 int main()
 {
