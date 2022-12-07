@@ -1,5 +1,5 @@
 ﻿// ConsoleApplication1.33.2.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+// образец
 
 #include <iostream>
 #include <string>
@@ -32,16 +32,13 @@ class shared_ptr_Toy {
 public:
     shared_ptr_Toy(){ /* I default. C-tor */
       cout << "\n shared_ptr_Toy default constructor";
-      const string toy = "Bone";
-      shared_ptr_Toy  make_shared_toy(const string toy);
-  //     loveleToy = new Toy("Bone");
+       loveleToy = new Toy("Bone");
         counter = new int(1);
     }
 
     shared_ptr_Toy(string name) {
         cout << "\n shared_ptr_Toy string constructor";
-        shared_ptr_Toy  make_shared_toy( name);
-   //     loveleToy = new Toy(name);
+        loveleToy = new Toy(name);
         counter = new int(1);
     }
 
@@ -96,7 +93,7 @@ public:
 
 shared_ptr_Toy make_shared_toy(string name){
     shared_ptr_Toy spt(name);
-    return spt;
+    return  spt;
 }
 
 
@@ -132,7 +129,7 @@ public:
 
 int main()
 {
-  //  shared_ptr_Toy ball_1 = make_shared_toy("Ball");
+    shared_ptr_Toy ball_1 = make_shared_toy("Ball");
  //   shared_ptr_Toy Stick = make_shared_toy("Stick");
  //   shared_ptr_Toy bone = make_shared_toy("bone");
  //   cout << "\n Counter after make_shared = " << ball_1.Counter();
@@ -141,9 +138,9 @@ int main()
    // shared_ptr_Toy ball_3;
   //  ball_3 = ball_2;
  // cout << "\n Counter after assignment = " << ball_1.Counter();
-    Dog e("Muha", "Stick", 3);
-    Dog a(e);
-   Dog d;
+ //   Dog e("Muha", "Stick", 3);
+//    Dog a(e);
+//  Dog d;
  //   Dog b(d);
  //   Dog q = e;
  //   Dog f("Belka");
