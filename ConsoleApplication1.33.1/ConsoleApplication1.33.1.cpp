@@ -33,35 +33,34 @@ public:
 	}
 	shared_ptr_toy(Toy* toy) {
 		lovetoy = toy;
-		counter = new int(1);
+			counter = new int(1);
 		cout << "\n shared_ptr_Toy Toy constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
-		++* counter;
 	}
 	shared_ptr_toy(string toyName) {
-		lovetoy = new Toy(toyName);
-		counter = new int(1);
+			lovetoy = new Toy(toyName);
+			counter = new int(1);
 		cout << "\n shared_ptr_Toy string constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
 	}
 	shared_ptr_toy(const shared_ptr_toy& oth) {
 		lovetoy = oth.lovetoy;
 		counter = oth.counter;
-		cout << "\n shared_ptr_Toy copy constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();// ;
 		++* counter;
+		cout << "\n shared_ptr_Toy copy constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();// ;
 	}
 	shared_ptr_toy& operator=(const shared_ptr_toy(&oth)) {
-		cout << "\n Copy assignment constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
 		if (this == &oth) {
 			return*this;
 		}
-		--* counter;
+			--* counter;
 		if (*counter == 0) {
-			cout << "\n delete lovelyToy. ";
+			cout << "\n delete lovelyToy " << lovetoy->getName() << ", delete counter"; 
 			delete lovetoy;
 			delete counter;
 		}
 		lovetoy = oth.lovetoy;
 		counter = oth.counter;
 		++* counter;
+		cout << "\n Copy assignment constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
 		return*this;
 	}
 	int getCounter() {
@@ -72,11 +71,10 @@ public:
 			--* counter;
 		}
 		else {
-			cout << "\ndelete lovetoy. " << "Counter: " << getCounter();
 			delete counter;
-			delete lovetoy;
+			cout << "\ndelete counter ";
 		}
-		cout << "\ndelete ptr. " << "Counter after deleting an object " << *counter;
+		cout << "\ndelete ptr " << lovetoy->getName() << ", counter after deleting an object " << getCounter();
 	}
 };
 
@@ -108,17 +106,17 @@ public:
 	};
 	Dog(string _name, Toy* toy, int _age) :loveToy(toy), name(_name) {
 		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage();
+		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
 		cout << "\n counter " << " after string name constructer = " << loveToy.getCounter();
 	};
 	Dog(string _name, shared_ptr_toy _loveToy, int _age) :loveToy(_loveToy), name(_name) {
 		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage();
+		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
 		cout << "\n counter " << " after string name constructer = " << loveToy.getCounter();
 	};
 	Dog() : Dog("Druzhok", "Bone", 2) {};
 	Dog(const string _name) : Dog(_name, "Bone", 2) {};
-	Dog(const Dog& oth) :loveToy(oth.loveToy) {
+	Dog(const Dog& oth):loveToy(oth.loveToy) {
 		name = oth.name;
 		age = oth.age;
 		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
@@ -133,23 +131,24 @@ public:
 int main()
 {
 	Toy Ball = make_shared_toy("Ball");
-	shared_ptr_toy spt(&Ball);
-	cout << "\n Counter after Toy constructor = " << spt.getCounter();
+	shared_ptr_toy spt0(&Ball);
+	cout << "\n Counter after Toy constructor = " << spt0.getCounter();
 	shared_ptr_toy spt1("Stick");
 	cout << "\n Counter after string constructor = " << spt1.getCounter();
 	shared_ptr_toy spt2("Bone");
 	cout << "\n Counter after string constructor = " << spt2.getCounter();
 	shared_ptr_toy spt3(spt2);
 	cout << "\n Counter after copy constructor = " << spt3.getCounter();
-	shared_ptr_toy spt4(spt);
+	shared_ptr_toy spt4(spt0);
 	cout << "\n Counter after Toy constructor = " << spt4.getCounter();
-	Dog e("Muha", "Stick", 3);
-	Dog a(e);
-	Dog d;
-	Dog f("Belka");
-	f.copyLovelyToy(e);
-	Dog c("Sharik", &Ball, 4);
-	Dog v("Pushok", spt, 3);
+	Dog Muha("Muha", "Stick", 3);
+	Dog Muha1(Muha);
+	Dog Druzhok;
+	Dog Belka("Belka");
+	Belka.copyLovelyToy(Druzhok);  //Теперь у Белки и Дружка одна общая игрушка bone.
+	Belka.copyLovelyToy(Muha);
+	Dog Sharik("Sharik", &Ball, 4);
+	Dog Pushok("Pushok", spt0, 3);
 	return 0;
 }
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
