@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <clocale>
+#include <typeinfo>
 using namespace std;
 
 class Graph {   
@@ -12,7 +13,8 @@ protected:
  int verticesNumber;
  vector<vector<int>>matrixList;
 public:
-    vector<int> vertices;
+    vector<int> nextVertices;
+    virtual int getverticesNumber() = 0;
     virtual void setVector(vector<vector<int>>& matrixList, int _verticesNumber) = 0;
     virtual  vector<vector<int>>& getMatrixList() = 0;
    virtual void AddEdge( vector<vector<int>>& matrixList)=0; // Метод принимает вершины начала и конца ребра и добавляет ребро
@@ -22,6 +24,7 @@ public:
     Graph() {};
    Graph(Graph& _oth) {};
     Graph(int _verticesNumber): verticesNumber(_verticesNumber) {};
+    Graph(Graph* oth) {};
     virtual ~Graph() {}
 };
 
@@ -31,6 +34,9 @@ class ListGraph:  public Graph {
 public:
     vector<int> nextVertices;
     vector<int> prevVertices;
+    int getverticesNumber() {
+        return verticesNumber;
+    }
     void setVector(vector<vector<int>>& matrixList, int _verticesNumber) {
         matrixList.resize(_verticesNumber);
         for (int i = 0; i < matrixList.size(); i++) {
@@ -111,19 +117,44 @@ public:
         }
     }
     ListGraph(int _verticesNumber) : verticesNumber(_verticesNumber) {
-        cout << "\n  Mассив списков смежностей";
         setVector(matrixList, _verticesNumber);
         AddEdge(matrixList);
     };
 
-    ListGraph(ListGraph& oth) {
-        verticesNumber = oth.verticesNumber;
-        matrixList = oth.getMatrixList();
-        nextVertices = oth.nextVertices;
-        prevVertices = oth.prevVertices;
+    ListGraph(ListGraph& _oth) {
+        verticesNumber = _oth.verticesNumber;
+        matrixList = _oth.getMatrixList();
+        nextVertices = _oth.nextVertices;
+        prevVertices = _oth.prevVertices;
     };
+    ListGraph(Graph* oth) {
+        string strL = "class ListGraph", strM = "class MatrixGraph";
+        matrixList.clear();
+        nextVertices.clear();
+        prevVertices.clear();
+        verticesNumber = oth->getverticesNumber();
+        setVector(matrixList, verticesNumber);
+        if (typeid(*oth).name() == strM) {
+            for (int i = 0; i < matrixList.size(); i++) {
+                for (int j = 0; j < oth->getMatrixList()[i].size(); j++) {
+                    if (oth->getMatrixList()[i][j] == 1) {
+                        matrixList[i].push_back(j);
+                    }
+                }
+            }
+        }
+        else if (typeid(*oth).name() ==strL) {
+            for (int i = 0; i < matrixList.size(); i++) {
+                for (int j = 1; j < oth->getMatrixList()[i].size(); j++) {
+                    matrixList[i].push_back(oth->getMatrixList()[i][j]);
+                }
+            }
+        }
+    }
     ~ListGraph() {
         matrixList.clear();
+        nextVertices.clear();
+        prevVertices.clear();
     }
 };
 
@@ -134,6 +165,9 @@ protected:
 public: 
     vector<int> nextVertices;
     vector<int> prevVertices;
+    int getverticesNumber() {
+        return verticesNumber;
+    }
     void setVector(vector<vector<int>>& matrixList, int _verticesNumber) {
          matrixList.resize(_verticesNumber);
         for (int i = 0; i < matrixList.size(); i++) {
@@ -219,7 +253,6 @@ public:
        }
    }
    MatrixGraph(int _verticesNumber): verticesNumber(_verticesNumber){
-       cout << "\nМатрица смежности";
        setVector(matrixList, _verticesNumber);
       AddEdge( matrixList);
     };
@@ -230,30 +263,70 @@ public:
        nextVertices=oth.nextVertices;
       prevVertices=oth.prevVertices;
     };
+    MatrixGraph(Graph* oth) {
+        string strL = "class ListGraph", strM = "class MatrixGraph";
+        matrixList.clear();
+        nextVertices.clear();
+        prevVertices.clear();
+        verticesNumber = oth->getverticesNumber();
+        setVector(matrixList, verticesNumber);
+        if (typeid(*oth).name() == strM) {
+            for (int i = 0; i < matrixList.size(); i++) {
+                for (int j = 0; j < oth->getMatrixList()[i].size(); j++) {
+                    if (oth->getMatrixList()[i][j] == 1) {
+                        matrixList[i][j]=1;
+                    }
+                }
+            }
+        }
+        else if (typeid(*oth).name() == strL) {
+            int vert = 0;
+            for (int i = 0; i < matrixList.size(); i++) {
+                for (int j = 1; j <oth-> getMatrixList()[i].size(); j++) {
+                    vert = oth->getMatrixList()[i][j];
+                    matrixList[i][vert]=1;
+                }
+            }
+        }
+    }
 ~MatrixGraph() {
            matrixList.clear();
+           nextVertices.clear();
+           prevVertices.clear();
     }
 };
 
     int main(){
         setlocale(LC_ALL, "rus");
     int verticesNum = 0, nextVertex=0, prevVertex=0;
-    cout << "\n Укажите количество вершин графа";
+    cout << "\n Укажите количество вершин графа ";
     cin >> verticesNum;
     ListGraph c(verticesNum);
     ListGraph d(c);
      MatrixGraph a(verticesNum);
      MatrixGraph b(a);
-     cout << "\n В массиве списков смежностей связанных пар вершин - " <<d.VerticesCount();
-   cout << "\n В матрице смежности связанных пар вершин - " << a.VerticesCount();
+     Graph* q=&d;
+     Graph* w = &b;
+     ListGraph f(q);
+     ListGraph r(w);
+     MatrixGraph p(q);
+     MatrixGraph t(w);
+     cout << "\n В массиве списков смежностей связанных пар вершин - " <<f.VerticesCount();
+     cout << "\n В массиве списков смежностей связанных пар вершин - " << r.VerticesCount();
+     cout << "\n В матрице смежности связанных пар вершин - " << p.VerticesCount();
+     cout << "\n В матрице смежности связанных пар вершин - "<<t.VerticesCount();
    cout << "\n Укажите вершину для начала обхода.";
    cin >> nextVertex;
-    d.GetNextVertices(nextVertex, d.nextVertices);
-   b.GetNextVertices(nextVertex, a.nextVertices);
+   f.GetNextVertices(nextVertex, d.nextVertices);
+   r.GetNextVertices(nextVertex, a.nextVertices);
+   t.GetNextVertices(nextVertex, t.nextVertices);
+   p.GetNextVertices(nextVertex, p.nextVertices);
    cout << "\n Укажите вершину конца обхода.";
    cin >> prevVertex;
-    d.GetPrevVertices(prevVertex, d.prevVertices);
-   b.GetPrevVertices(prevVertex, a.prevVertices);
+   f.GetPrevVertices(prevVertex, d.prevVertices);
+   r.GetPrevVertices(prevVertex, a.prevVertices);
+   t.GetPrevVertices(prevVertex, t.prevVertices);
+   p.GetPrevVertices(prevVertex, p.prevVertices);
 	return 0;
 }
 

@@ -1,154 +1,108 @@
 ﻿// ConsoleApplication1.33.3.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//Урок 31 Задача 1. Реализация "умного" указателя.
+//Урок 31 Пример реализации "умного" указателя.
 
 
 #include <iostream>
-#include <string>
+//#include <string>
 using namespace std;
-class Toy {
-	string name;
-public:
-	string getName() {
-		return name;
-	}
-	Toy(const string _name) :name(_name) {
-		cout << "\nToy: "<<name;
-	};
-	Toy() :name("Bone") {
-		cout << "\nToy: ";
-	};
-	~Toy() {
-		cout << "\ndelete toy: " << getName();
-	}
-};
+//#define MY_SHARED_PTR_REALIZATION
 
-Toy make_shared_toy(const string toyName);
-
-class shared_ptr_toy {
-	Toy *lovetoy;
-	int* counter;
-public:
-	Toy* getToy() {
-		return lovetoy;
-	}
-	  shared_ptr_toy (Toy *toy) {
-     lovetoy = toy;
-		   counter = new int(1);
-	 cout << "\n shared_ptr_Toy Toy constructor. Toy: " << lovetoy->getName() << ", counter: "<< getCounter();
-   }
-	shared_ptr_toy(string toyName) {
-		 lovetoy = new Toy(toyName);
-			counter = new int(1);
-		 cout << "\n shared_ptr_Toy string constructor. Toy: " << lovetoy->getName()<< ", counter: " << getCounter();
-	}
-	shared_ptr_toy(const shared_ptr_toy& oth) {
-		lovetoy = oth.lovetoy;
-		counter = oth.counter;
-		++* counter;
-		cout << "\n shared_ptr_Toy copy constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
-	}
-	shared_ptr_toy& operator=(const shared_ptr_toy(&oth)) {
-		if (this == &oth) {
-			return*this;
-		}
-		--* counter;
-		if (*counter == 0) {
-			cout << "\n delete lovelyToy " << lovetoy->getName() << ", delete counter";
-			delete lovetoy;
-			delete counter;
-		}
-		lovetoy = oth.lovetoy;
-		counter = oth.counter;
-		++* counter;
-		cout << "\n Copy assignment constructor. Toy: " << lovetoy->getName() << ", counter: " << getCounter();
-		return*this;
-	}
-	int getCounter() {
-		return *counter;
-	}
-	
-	~shared_ptr_toy() {
-		if (getCounter() > 1) {
-			--* counter;
-		}
-		else {
-			delete counter;
-		//		cout << "\ndelete lovetoy " << lovetoy->getName() << ", delete counter";
-			cout << "\n delete counter";
-		}
-	cout << "\ndelete ptr " << lovetoy->getName() << " Counter after deleting an object "<< getCounter();
-	}
-};
-
-Toy make_shared_toy(string toyName) {
-	Toy toy(toyName);
-	return toy;
-};
-
-class Dog {
-	int age = 0;
-	string name;
-	shared_ptr_toy loveToy;
-public:
-	int getage() {
-		return age;
-	}
-	string getname() {
-		return name;
-	}
-	void copyLovelyToy(const Dog& oth) {
-		loveToy = oth.loveToy;
-		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
-		cout << "\n counter " << " after assignment constructer = " << loveToy.getCounter() << "\n";
-	}
-	Dog(const string _name, const string toyName, int _age) : name(_name), loveToy(toyName) {
-		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage()<<" "<< loveToy.getToy()->getName();
-		cout << "\n counter " << " after string name constructer = " << loveToy.getCounter();
-	};
-	Dog(string _name, Toy* toy, int _age) :loveToy(toy), name(_name) {
-		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
-		cout << "\n counter " << " after string name constructer = " << loveToy.getCounter();
-	};
-	Dog(string _name, shared_ptr_toy _loveToy, int _age) :loveToy(_loveToy), name(_name) {
-		if (_age >= 0 && age < 30) { age = _age; };
-		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
-		cout << "\n counter " << " after string name constructer = " << loveToy.getCounter();
-	};
-	Dog() : Dog("Druzhok", "Bone", 2) {};
-	Dog(const string _name) : Dog(_name, "Bone", 2) {};
-	Dog(const Dog& oth) :loveToy(oth.loveToy) {
-		name = oth.name;
-		age = oth.age;
-		cout << "\nDog: " << getname() << " " << getage() << " " << loveToy.getToy()->getName();
-		cout << "\n counter " << " after copy constructer = " << loveToy.getCounter();
-	}
-	~Dog() {
-		cout << "\n delete dog " << getname();
-	}
-};
-
-int main()
+class Toy
 {
-Toy Ball=make_shared_toy("Ball");
-	shared_ptr_toy spt0(&Ball);
-    cout << "\n Counter after Toy constructor = " << spt0.getCounter();
-	shared_ptr_toy spt1("Stick");
-	cout << "\n Counter after string constructor = " << spt1.getCounter();
-	shared_ptr_toy spt2("Bone");
-	cout << "\n Counter after string constructor = " << spt2.getCounter();
-	shared_ptr_toy spt3(spt2);
-	cout << "\n Counter after copy constructor = " << spt3.getCounter();
-	shared_ptr_toy spt4(spt0);
-	cout << "\n Counter after Toy constructor = " << spt4.getCounter();
-	Dog e("Muha", "Stick", 3);
-	Dog a(e);
-	Dog d;
-	Dog f("Belka");
-	f.copyLovelyToy(e);
-	Dog c("Sharik", &Ball, 4);
-	Dog v("Pushok", spt0, 3);
+    std::string name;
+public:
+    Toy(std::string name) : name(name) {
+
+    };
+    Toy() : Toy("SomeToy") {
+
+    };
+    const std::string get_name()
+    {
+        return name;
+    }
+
+    ~Toy() {
+        std::cout << "D-tor Toy" << std::endl;
+    }
+};
+
+class shared_ptr_Toy
+{
+    Toy* obj;
+    int* counter;
+public:
+    shared_ptr_Toy() /* I default. C-tor */
+    {
+        std::cout << "shared_ptr_Toy::shared_ptr_Toy default C-tor" << std::endl;
+        obj = new Toy("SomeToy");
+        counter = new int(1);
+    }
+
+    shared_ptr_Toy(std::string name)
+    {
+        std::cout << "shared_ptr_Toy::shared_ptr_Toy string C-tor" << std::endl;
+        obj = new Toy(name);
+        counter = new int(1);
+    }
+
+    shared_ptr_Toy(Toy* toy)
+    {
+        std::cout << "shared_ptr_Toy::shared_ptr_Toy Toy C-tor" << std::endl;
+        obj = toy;
+        counter = new int(1);
+    }
+
+    shared_ptr_Toy(const shared_ptr_Toy& oth) /* II. Copy C-tor */
+    {
+        std::cout << "shared_ptr_Toy::shared_ptr_Toy Copy C-tor" << std::endl;
+        obj = oth.obj;
+        counter = oth.counter;
+        ++* counter;
+    }
+
+    shared_ptr_Toy& operator=(const shared_ptr_Toy& oth) { /* III. Copy assignment */
+        std::cout << "shared_ptr_Toy::operator= Copy assignment C-tor" << std::endl;
+        /* TODO Сделать копирующий конструктор */
+    }
+
+    int use_count() {
+        return *counter;
+    }
+
+    ~shared_ptr_Toy()
+    {
+        std::cout << "~shared_ptr_Toy D-tor" << std::endl;
+        /* TODO Сделать деструктор */
+    }
+};
+
+shared_ptr_Toy make_shared_toy(std::string name)
+{
+    shared_ptr_Toy spt(name);
+    return spt;
+}
+
+
+
+int main() {
+#ifdef MY_SHARED_PTR_REALIZATION
+    shared_ptr_Toy ptr = make_shared_toy("Ball");
+    std::cout << "Counter after make_shared = " << ptr.use_count() << std::endl;
+    shared_ptr_Toy ptr2(ptr);
+    std::cout << "Counter after copy C-tor = " << ptr.use_count() << std::endl;
+    shared_ptr_Toy ptr3;
+    ptr3 = ptr2;
+    std::cout << "Counter after assignment = " << ptr.use_count() << std::endl;
+#else
+    std::shared_ptr<Toy> ptr = std::make_shared<Toy>("Ball");
+    std::cout << "Counter after make_shared = " << ptr.use_count() << std::endl;
+    std::shared_ptr<Toy> ptr2(ptr);
+    std::cout << "Counter after copy C-tor = " << ptr.use_count() << std::endl;
+    std::shared_ptr<Toy> ptr3;
+    ptr3 = ptr2;
+    std::cout << "Counter after assignment = " << ptr.use_count() << std::endl;
+#endif
 	return 0;
 }
 
